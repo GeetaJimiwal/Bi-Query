@@ -36,9 +36,9 @@ export const salesData: TableRow[] = [
   {
     id: 1,
     month: "Apr",
-    product: "Product B",
+    product: "rrrsB",
     region: "East",
-    sales: 8783.0,
+    revenue: 8783.0,
     profit: 189.0,
     quantity: 47,
  
@@ -48,7 +48,7 @@ export const salesData: TableRow[] = [
     month: "Jun",
     product: "Product C",
     region: "South",
-    sales: 367.0,
+    revenue: 367.0,
     profit: 3074.0,
     quantity: 2,
     
@@ -58,7 +58,7 @@ export const salesData: TableRow[] = [
     month: "Sep",
     product: "Product B",
     region: "South",
-    sales: 7485.0,
+    revenue: 7485.0,
     profit: 496.0,
     quantity: 18, 
   },
@@ -67,7 +67,7 @@ export const salesData: TableRow[] = [
     month: "Apr",
     product: "Product A",
     region: "North",
-    sales: 8675.0,
+    revenue: 8675.0,
     profit: 4825.0,
     quantity: 58,
      
@@ -77,7 +77,7 @@ export const salesData: TableRow[] = [
     month: "Sep",
     product: "Product C",
     region: "North",
-    sales: 3342.0,
+    revenue: 3342.0,
     profit: 3550.0,
     quantity: 91,
      
@@ -87,7 +87,7 @@ export const salesData: TableRow[] = [
     month: "Jun",
     product: "Product A",
     region: "West",
-    sales: 7607.0,
+    revenue: 7607.0,
     profit: 2198.0,
     quantity: 45,
     
@@ -97,7 +97,7 @@ export const salesData: TableRow[] = [
     month: "Jun",
     product: "Product B",
     region: "North",
-    sales: 8457.0,
+    revenue: 8457.0,
     profit: 550.0,
     quantity: 94,
      
@@ -107,7 +107,7 @@ export const salesData: TableRow[] = [
     month: "Dec",
     product: "Product C",
     region: "North",
-    sales: 9962.0,
+    revenue: 9962.0,
     profit: 4594.0,
     quantity: 63,
   },
@@ -116,7 +116,7 @@ export const salesData: TableRow[] = [
     month: "Apr",
     product: "Product B",
     region: "East",
-    sales: 8783.0,
+    revenue: 8783.0,
     profit: 189.0,
     quantity: 47,
  
@@ -126,7 +126,7 @@ export const salesData: TableRow[] = [
     month: "Jun",
     product: "Product C",
     region: "South",
-    sales: 367.0,
+    revenue: 367.0,
     profit: 3074.0,
     quantity: 2,
     
@@ -136,7 +136,7 @@ export const salesData: TableRow[] = [
     month: "Sep",
     product: "Product B",
     region: "South",
-    sales: 7485.0,
+    revenue: 7485.0,
     profit: 496.0,
     quantity: 18, 
   },
@@ -145,7 +145,7 @@ export const salesData: TableRow[] = [
     month: "Apr",
     product: "Product A",
     region: "North",
-    sales: 8675.0,
+    revenue: 8675.0,
     profit: 4825.0,
     quantity: 58,
      
@@ -155,7 +155,7 @@ export const salesData: TableRow[] = [
     month: "Sep",
     product: "Product C",
     region: "North",
-    sales: 3342.0,
+    revenue: 3342.0,
     profit: 3550.0,
     quantity: 91,
      
@@ -165,7 +165,7 @@ export const salesData: TableRow[] = [
     month: "Jun",
     product: "Product A",
     region: "West",
-    sales: 7607.0,
+    revenue: 7607.0,
     profit: 2198.0,
     quantity: 45,
     
@@ -175,7 +175,7 @@ export const salesData: TableRow[] = [
     month: "Jun",
     product: "Product B",
     region: "North",
-    sales: 8457.0,
+    revenue: 8457.0,
     profit: 550.0,
     quantity: 94,
      
@@ -185,16 +185,16 @@ export const salesData: TableRow[] = [
     month: "Dec",
     product: "Product C",
     region: "North",
-    sales: 9962.0,
+    revenue: 9962.0,
     profit: 4594.0,
     quantity: 63,
   },
   {
     id: 1,
     month: "Apr",
-    product: "Product B",
+    product: "eeeProduct B",
     region: "East",
-    sales: 8783.0,
+    revenue: 8783.0,
     profit: 189.0,
     quantity: 47,
  
@@ -204,7 +204,7 @@ export const salesData: TableRow[] = [
     month: "Jun",
     product: "Product C",
     region: "South",
-    sales: 367.0,
+    revenue: 367.0,
     profit: 3074.0,
     quantity: 2,
     
@@ -214,7 +214,7 @@ export const salesData: TableRow[] = [
     month: "Sep",
     product: "Product B",
     region: "South",
-    sales: 7485.0,
+    revenue: 7485.0,
     profit: 496.0,
     quantity: 18, 
   },
@@ -223,7 +223,7 @@ export const salesData: TableRow[] = [
     month: "Apr",
     product: "Product A",
     region: "North",
-    sales: 8675.0,
+    revenue: 8675.0,
     profit: 4825.0,
     quantity: 58,
      
@@ -233,7 +233,7 @@ export const salesData: TableRow[] = [
     month: "Sep",
     product: "Product C",
     region: "North",
-    sales: 3342.0,
+    revenue: 3342.0,
     profit: 3550.0,
     quantity: 91,
      
@@ -243,7 +243,7 @@ export const salesData: TableRow[] = [
     month: "Jun",
     product: "Product A",
     region: "West",
-    sales: 7607.0,
+    revenue: 7607.0,
     profit: 2198.0,
     quantity: 45,
     
@@ -253,7 +253,7 @@ export const salesData: TableRow[] = [
     month: "Jun",
     product: "Product B",
     region: "North",
-    sales: 8457.0,
+    revenue: 8457.0,
     profit: 550.0,
     quantity: 94,
      
@@ -263,7 +263,7 @@ export const salesData: TableRow[] = [
     month: "Dec",
     product: "Product C",
     region: "North",
-    sales: 9962.0,
+    revenue: 9962.0,
     profit: 4594.0,
     quantity: 63,
   },
@@ -276,7 +276,7 @@ export const inventoryData = [
     month: "Apr",
     product: "Product B",
     region: "East",
-    sales: 8783.0,
+    revenue: 8783.0,
     profit: 189.0,
     quantity: 47,
  
@@ -286,7 +286,7 @@ export const inventoryData = [
     month: "Jun",
     product: "Product C",
     region: "South",
-    sales: 367.0,
+    revenue: 367.0,
     profit: 3074.0,
     quantity: 2,
     
@@ -296,7 +296,7 @@ export const inventoryData = [
     month: "Sep",
     product: "Product B",
     region: "South",
-    sales: 7485.0,
+    revenue: 7485.0,
     profit: 496.0,
     quantity: 18, 
   },
@@ -305,7 +305,7 @@ export const inventoryData = [
     month: "Apr",
     product: "Product A",
     region: "North",
-    sales: 8675.0,
+    revenue: 8675.0,
     profit: 4825.0,
     quantity: 58,
      
@@ -315,7 +315,7 @@ export const inventoryData = [
     month: "Sep",
     product: "Product C",
     region: "North",
-    sales: 3342.0,
+    revenue: 3342.0,
     profit: 3550.0,
     quantity: 91,
      
@@ -325,7 +325,7 @@ export const inventoryData = [
     month: "Jun",
     product: "Product A",
     region: "West",
-    sales: 7607.0,
+    revenue: 7607.0,
     profit: 2198.0,
     quantity: 45,
     
@@ -335,7 +335,7 @@ export const inventoryData = [
     month: "Jun",
     product: "Product B",
     region: "North",
-    sales: 8457.0,
+    revenue: 8457.0,
     profit: 550.0,
     quantity: 94,
      
@@ -345,7 +345,7 @@ export const inventoryData = [
     month: "Dec",
     product: "Product C",
     region: "North",
-    sales: 9962.0,
+    revenue: 9962.0,
     profit: 4594.0,
     quantity: 63,
   },
@@ -354,7 +354,7 @@ export const inventoryData = [
 // Add pagination configuration
 export const ITEMS_PER_PAGE = 10;
 
-// Update salesData and inventoryData structure
+// Update revenueData and inventoryData structure
 export interface PaginatedData {
   data: TableRow[];
   totalPages: number;

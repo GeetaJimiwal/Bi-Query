@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import type { Metric, Dimension, TableRow, Filter, FilterOperator } from "../types"
-import { filterTableData, generateSqlQuery } from "../utils/queryUtils"
+import { filterTableData, generateSqlQuery, executeQuery as executeSqlQuery } from "../utils/queryUtils"
 import { tableOptions, aggregationOptions, mockDataByTable } from "../data/mockData"
 import { ChevronDown, Search } from "lucide-react"
 import ChartView from './ChartView'
@@ -79,10 +79,23 @@ export default function QueryBuilder() {
             setAvailableDimensions([])
         }
 
-        // Reset SQL query
-        setSqlQuery("-- SQL query will appear here --")
+        // Only reset displayed data, keep the SQL query visible
         setDisplayedTableData([])
     }, [selectedTable])
+
+    // Add new useEffect for aggregation changes
+    useEffect(() => {
+        if (selectedMetrics.length > 0 || selectedDimensions.length > 0) {
+            const query = generateSqlQuery(
+                selectedTable.toLowerCase(),
+                selectedAggregation,
+                selectedMetrics,
+                selectedDimensions,
+                filters
+            )
+            setSqlQuery(query)
+        }
+    }, [selectedAggregation])
 
     // Filter metrics based on search
     const filteredMetrics = availableMetrics.filter((metric) =>
@@ -94,33 +107,7 @@ export default function QueryBuilder() {
         dimension.label.toLowerCase().includes(dimensionSearch.toLowerCase()),
     )
 
-    // Toggle metric selection
-    const toggleMetric = (metric: Metric) => {
-        let newMetrics
-        if (selectedMetrics.some((m) => m.value === metric.value)) {
-            newMetrics = selectedMetrics.filter((m) => m.value !== metric.value)
-        } else {
-            newMetrics = [...selectedMetrics, metric]
-        }
-        setSelectedMetrics(newMetrics)
 
-        // Update SQL query
-        updateSqlQuery(newMetrics, selectedDimensions)
-    }
-
-    // Toggle dimension selection
-    const toggleDimension = (dimension: Dimension) => {
-        let newDimensions
-        if (selectedDimensions.some((d) => d.value === dimension.value)) {
-            newDimensions = selectedDimensions.filter((d) => d.value !== dimension.value)
-        } else {
-            newDimensions = [...selectedDimensions, dimension]
-        }
-        setSelectedDimensions(newDimensions)
-
-        // Update SQL query
-        updateSqlQuery(selectedMetrics, newDimensions)
-    }
 
     // Remove metric
     const removeMetric = (metric: Metric) => {
@@ -142,44 +129,115 @@ export default function QueryBuilder() {
         setSqlQuery(query)
     }
 
-    // Execute query
-    const executeQuery = () => {
-        if (selectedMetrics.length === 0 && selectedDimensions.length === 0) {
-            setSqlQuery("-- Select metrics or dimensions to generate a query")
-            setDisplayedTableData([])
-            return
+
+
+    // const getColumnHeaders = () => {
+    //     const tableKey = selectedTable.toLowerCase() as keyof typeof mockDataByTable;
+    //     if (!mockDataByTable[tableKey] || mockDataByTable[tableKey].length === 0) {
+    //         return [];
+    //     }
+
+    //     const firstRow = mockDataByTable[tableKey][0];
+    //     return Object.keys(firstRow).map(key => ({
+    //         key: key.toLowerCase(),
+    //         label: key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()
+    //     }));
+    // };
+    const getColumnHeaders = () => {
+        const headers = [];
+
+        // Only add ID if we have any selections
+        if (selectedMetrics.length > 0 || selectedDimensions.length > 0) {
+            headers.push({ key: 'id', label: 'Id' });
         }
 
-        // Update SQL query with filters
-        const query = generateSqlQuery(
-            selectedTable.toLowerCase(),
-            selectedAggregation,
-            selectedMetrics,
-            selectedDimensions,
-            filters  // Add filters here
-        )
-        setSqlQuery(query)
+        // Add selected dimensions
+        selectedDimensions.forEach((dimension) => {
+            headers.push({
+                key: dimension.value,
+                label: dimension.label
+            });
+        });
 
-        // Get data for the selected table
-        const tableData = mockDataByTable[selectedTable.toLowerCase() as keyof typeof mockDataByTable] || []
+        // Add selected metrics
+        selectedMetrics.forEach((metric) => {
+            headers.push({
+                key: metric.value,
+                label: metric.label
+            });
+        });
 
-        // Set the displayed table data
-        setDisplayedTableData(tableData)
+        return headers;
+    };
+    const [pendingMetrics, setPendingMetrics] = useState<Metric[]>([])
+    const [pendingDimensions, setPendingDimensions] = useState<Dimension[]>([])
+
+    // Modify toggleMetric to use pending state
+    const toggleMetric = (metric: Metric) => {
+        let newMetrics = pendingMetrics.some((m) => m.value === metric.value)
+            ? pendingMetrics.filter((m) => m.value !== metric.value)
+            : [...pendingMetrics, metric];
+        setPendingMetrics(newMetrics);
+        updateSqlQuery(newMetrics, pendingDimensions);
     }
 
-    const getColumnHeaders = () => {
-        const tableKey = selectedTable.toLowerCase() as keyof typeof mockDataByTable;
-        if (!mockDataByTable[tableKey] || mockDataByTable[tableKey].length === 0) {
-            return [];
+    // Modify toggleDimension to use pending state
+    const toggleDimension = (dimension: Dimension) => {
+        let newDimensions = pendingDimensions.some((d) => d.value === dimension.value)
+            ? pendingDimensions.filter((d) => d.value !== dimension.value)
+            : [...pendingDimensions, dimension];
+        setPendingDimensions(newDimensions);
+        updateSqlQuery(pendingMetrics, newDimensions);
+    }
+
+    const executeQuery = () => {
+        if (!sqlQuery || sqlQuery.startsWith('--')) {
+            setDisplayedTableData([]);
+            setPaginatedTableData([]);
+            return;
         }
 
-        const firstRow = mockDataByTable[tableKey][0];
-        return Object.keys(firstRow).map(key => ({
-            key: key.toLowerCase(),
-            label: key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()
-        }));
-    };
+        try {
+            // Update actual selections when executing query
+            setSelectedMetrics(pendingMetrics);
+            setSelectedDimensions(pendingDimensions);
 
+            // Get data for the selected table
+            const tableData = mockDataByTable[selectedTable.toLowerCase() as keyof typeof mockDataByTable] || [];
+
+            // Execute the query on the mock data
+            const queryResult = executeSqlQuery(sqlQuery, tableData);
+
+            // Set the displayed table data
+            setDisplayedTableData(queryResult);
+
+            // Reset to first page when executing new query
+            setCurrentPage(1);
+        } catch (error) {
+            console.error('Error executing query:', error);
+            setDisplayedTableData([]);
+            setPaginatedTableData([]);
+        }
+    }
+
+    // Update useEffect for table changes
+    useEffect(() => {
+        setPendingMetrics([])
+        setPendingDimensions([])
+        setSelectedMetrics([])
+        setSelectedDimensions([])
+        setFilters([])
+        setDisplayedTableData([])
+
+        const tableKey = selectedTable.toLowerCase() as keyof typeof tableSpecificOptions
+        if (tableSpecificOptions[tableKey]) {
+            setAvailableMetrics(tableSpecificOptions[tableKey].metrics)
+            setAvailableDimensions(tableSpecificOptions[tableKey].dimensions)
+        } else {
+            setAvailableMetrics([])
+            setAvailableDimensions([])
+        }
+    }, [selectedTable])
 
     // Replace the static filterFields with a dynamic getter
     const getFilterFields = () => {
@@ -610,8 +668,7 @@ export default function QueryBuilder() {
                     <div className="mb-6 p-4 bg-gray-50 rounded">
                         <pre className="whitespace-pre-wrap font-mono text-sm">{sqlQuery}</pre>
                     </div>
-
-                    {displayedTableData.length > 0 ? (
+                    {displayedTableData.length > 0 && (selectedMetrics.length > 0 || selectedDimensions.length > 0) ? (
                         <>
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-lg font-medium">Results</h2>
@@ -640,31 +697,37 @@ export default function QueryBuilder() {
                             {viewMode === "table" ? (
                                 <>
                                     <div className="overflow-x-auto">
-                                        <table className="min-w-full">
-                                            <thead>
-                                                <tr className="bg-gray-50 border-b border-gray-200">
-                                                    {getColumnHeaders().map((header) => (
-                                                        <th
-                                                            key={header.key}
-                                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider"
-                                                        >
-                                                            {header.label}
-                                                        </th>
-                                                    ))}
-                                                </tr>
-                                            </thead>
-                                            <tbody className="bg-white divide-y divide-gray-200">
-                                                {paginatedTableData.map((row) => (
-                                                    <tr key={row.id}>
+                                        {getColumnHeaders().length > 0 ? (
+                                            <table className="min-w-full">
+                                                <thead>
+                                                    <tr className="bg-gray-50 border-b border-gray-200">
                                                         {getColumnHeaders().map((header) => (
-                                                            <td key={`${row.id}-${header.key}`} className="px-6 py-4 whitespace-nowrap text-sm">
-                                                                {row[header.key]}
-                                                            </td>
+                                                            <th
+                                                                key={header.key}
+                                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider"
+                                                            >
+                                                                {header.label}
+                                                            </th>
                                                         ))}
                                                     </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody className="bg-white divide-y divide-gray-200">
+                                                    {paginatedTableData.map((row) => (
+                                                        <tr key={row.id}>
+                                                            {getColumnHeaders().map((header) => (
+                                                                <td key={`${row.id}-${header.key}`} className="px-6 py-4 whitespace-nowrap text-sm">
+                                                                    {row[header.key]}
+                                                                </td>
+                                                            ))}
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        ) : (
+                                            <div className="text-center text-gray-500 mt-8">
+                                                Please select metrics or dimensions to display data
+                                            </div>
+                                        )}
                                     </div>
                                     <Pagination
                                         currentPage={currentPage}
@@ -689,5 +752,5 @@ export default function QueryBuilder() {
             </div>
         </div>
     );
-};
 
+}
