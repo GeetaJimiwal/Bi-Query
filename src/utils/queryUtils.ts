@@ -1,75 +1,74 @@
-// import { Dimension, TableRow } from '../types';
-
-// export const filterTableData = (data: TableRow[], metrics: Dimension[], dimensions: Dimension[]): TableRow[] => {
-//   try {
-//     if (!data || !data.length) return [];
-    
-//     // Base columns that should always be included
-//     const baseColumns = ['id', 'month', 'product', 'region'];
-    
-//     // Get fields based on active selection
-//     const selectedFields = metrics.length > 0 ? metrics : dimensions;
-//     const keepFields = [...baseColumns, ...selectedFields.map(field => field.value)];
-    
-//     // Return data with only selected fields
-//     return data.map(row => {
-//       const filteredRow: TableRow = {} as TableRow;
-//       keepFields.forEach(field => {
-//         if (field in row) {
-//           filteredRow[field] = row[field];
-//         }
-//       });
-//       return filteredRow;
-//     });
-//   } catch (error) {
-//     console.error('Error filtering data:', error);
-//     return [];
-//   }
-// };
-import type { Metric, Dimension, TableRow } from "../types"
-
-/**
- * Generates a SQL query string based on selected metrics and dimensions
- */
+import type { Metric, Dimension, TableRow, Filter } from "../types"
 export function generateSqlQuery(
   tableName: string,
   aggregation: string,
   selectedMetrics: Metric[],
   selectedDimensions: Dimension[] = [],
+  filters: Filter[] = []
 ): string {
-  if (selectedMetrics.length === 0) {
-    return "-- Select metrics to generate a query"
+  if (selectedMetrics.length === 0 && selectedDimensions.length === 0) {
+    return "-- Select metrics or dimensions to generate a query"
   }
 
-  const metricFields = selectedMetrics.map((metric) => `${aggregation}(${metric.value}) AS ${metric.value}`).join(", ")
-
-  let query = `SELECT ${metricFields}`
+  let query = "SELECT "
 
   if (selectedDimensions.length > 0) {
     const dimensionFields = selectedDimensions.map((dim) => dim.value).join(", ")
-    query += `, ${dimensionFields}`
+    query += dimensionFields
+    if (selectedMetrics.length > 0) {
+      query += ", "
+    }
+  }
+
+  if (selectedMetrics.length > 0) {
+    const metricFields = selectedMetrics
+      .map((metric) => `${aggregation}(${metric.value}) AS ${metric.value}`)
+      .join(", ")
+    query += metricFields
   }
 
   query += `\nFROM ${tableName}`
 
-  if (selectedDimensions.length > 0) {
-    query += `\nGROUP BY ${selectedDimensions.map((dim) => dim.value).join(", ")}`
+  // Add WHERE clause if filters exist
+  if (filters.length > 0) {
+    const filterClauses = filters.map(filter => {
+      if (filter.operator === 'LIKE') {
+        return `${filter.field} LIKE '${filter.value}'`;
+      }
+      return `${filter.field} ${filter.operator} '${filter.value}'`;
+    });
+    
+    query += `\nWHERE ${filterClauses.join('\nAND ')}`;
   }
 
-  return query
+  // Add GROUP BY clause if dimensions are selected
+  if (selectedDimensions.length > 0) {
+    query += `\nGROUP BY ${selectedDimensions.map((dim) => dim.value).join(", ")}`;
+  }
+
+  return query;
 }
 
-/**
- * Filters table data based on selected metrics and dimensions
- */
 export function filterTableData(
   data: TableRow[],
   selectedMetrics: Metric[],
   selectedDimensions: Dimension[] = [],
 ): TableRow[] {
-  if (selectedMetrics.length === 0) {
+  if (selectedMetrics.length === 0 && selectedDimensions.length === 0) {
     return []
   }
 
-  return data
+  return data.filter((row) => {
+    // Check if row has at least one of the selected metrics
+    const metricsMatch =
+      selectedMetrics.length === 0 ||
+      selectedMetrics.some((metric) => row[metric.value as keyof typeof row] !== undefined)
+
+    // Check if row has all of the selected dimensions
+    const dimensionsMatch =
+      selectedDimensions.length === 0 ||
+      selectedDimensions.every((dimension) => row[dimension.value as keyof typeof row] !== undefined)
+
+    return metricsMatch && dimensionsMatch
+  })
 }
