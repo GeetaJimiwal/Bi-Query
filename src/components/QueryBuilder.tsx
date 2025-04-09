@@ -642,7 +642,16 @@ export default function QueryBuilder() {
                                     <div className="overflow-x-auto">
                                         <table className="min-w-full">
                                             <thead>
-                                                {/* ... existing thead code ... */}
+                                                <tr className="bg-gray-50 border-b border-gray-200">
+                                                    {getColumnHeaders().map((header) => (
+                                                        <th
+                                                            key={header.key}
+                                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider"
+                                                        >
+                                                            {header.label}
+                                                        </th>
+                                                    ))}
+                                                </tr>
                                             </thead>
                                             <tbody className="bg-white divide-y divide-gray-200">
                                                 {paginatedTableData.map((row) => (
