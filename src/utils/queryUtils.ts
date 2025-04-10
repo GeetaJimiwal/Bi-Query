@@ -15,7 +15,7 @@ export function generateSqlQuery(
   let query = "SELECT "
 
   // Always include id field first
-  query += "id, "
+  query += "id, " 
 
   if (selectedDimensions.length > 0) {
     const dimensionFields = selectedDimensions.map((dim) => dim.value).join(", ")
