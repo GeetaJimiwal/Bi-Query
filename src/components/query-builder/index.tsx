@@ -48,7 +48,7 @@ export default function QueryBuilder() {
                 <div className="w-[520px] border-r border-gray-200 p-6">
                     <h2 className="text-lg font-medium mb-6">Build Your Query</h2>
                     
-                    <div className="space-y-6">
+                    <div className="space-y-6 border border-gray-200 rounded-lg p-4 bg-white">
                         <TableSelector 
                             selectedTable={selectedTable}
                             onTableChange={setSelectedTable}

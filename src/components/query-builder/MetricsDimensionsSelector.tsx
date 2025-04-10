@@ -61,13 +61,15 @@ export function MetricsDimensionsSelector({
 
     // Add selected items display below dropdowns
     return (
-        <div>
+        <div className="space-y-4">
             {/* Tabs */}
-            <div className="flex mb-4">
+            <div className="flex mb-4 bg-gray-100">
                 <button
                     className={cn(
-                        "px-4 py-2 text-sm font-medium",
-                        activeTab === "metrics" ? "bg-gray-100 rounded-t" : ""
+                        "flex-1 px-4 py-2 text-sm font-medium",
+                        activeTab === "metrics" 
+                            ? "bg-white" 
+                            : "bg-gray-100"
                     )}
                     onClick={() => setActiveTab("metrics")}
                 >
@@ -75,39 +77,41 @@ export function MetricsDimensionsSelector({
                 </button>
                 <button
                     className={cn(
-                        "px-4 py-2 text-sm font-medium",
-                        activeTab === "dimensions" ? "bg-gray-100 rounded-t" : ""
+                        "flex-1 px-4 py-2 text-sm font-medium",
+                        activeTab === "dimensions" 
+                            ? "bg-white" 
+                            : "bg-gray-100"
                     )}
                     onClick={() => setActiveTab("dimensions")}
                 >
                     Dimensions
                 </button>
             </div>
-
-            {/* Dropdowns */}
-            {activeTab === "metrics" ? (
-                <MetricsDropdown
-                    isOpen={isMetricsDropdownOpen}
-                    setIsOpen={setIsMetricsDropdownOpen}
-                    metrics={filteredMetrics}
-                    selectedMetrics={pendingMetrics}
-                    onToggle={toggleMetric}
-                    searchValue={metricSearch}
-                    onSearchChange={setMetricSearch}
-                />
-            ) : (
-                <DimensionsDropdown
-                    isOpen={isDimensionsDropdownOpen}
-                    setIsOpen={setIsDimensionsDropdownOpen}
-                    dimensions={filteredDimensions}
-                    selectedDimensions={pendingDimensions}
-                    onToggle={toggleDimension}
-                    searchValue={dimensionSearch}
-                    onSearchChange={setDimensionSearch}
-                />
-            )}
-
-            {/* Single Selected Items section */}
+                
+            {/* Dropdowns with border */}
+            <div className="border border-gray-600 rounded">
+                {activeTab === "metrics" ? (
+                    <MetricsDropdown
+                        isOpen={isMetricsDropdownOpen}
+                        setIsOpen={setIsMetricsDropdownOpen}
+                        metrics={filteredMetrics}
+                        selectedMetrics={pendingMetrics}
+                        onToggle={toggleMetric}
+                        searchValue={metricSearch}
+                        onSearchChange={setMetricSearch}
+                    />
+                ) : (
+                    <DimensionsDropdown
+                        isOpen={isDimensionsDropdownOpen}
+                        setIsOpen={setIsDimensionsDropdownOpen}
+                        dimensions={filteredDimensions}
+                        selectedDimensions={pendingDimensions}
+                        onToggle={toggleDimension}
+                        searchValue={dimensionSearch}
+                        onSearchChange={setDimensionSearch}
+                    />
+                )}
+            </div>
             <SelectedItems
                 activeTab={activeTab}
                 metrics={pendingMetrics}
