@@ -1,10 +1,12 @@
 import type { Metric, Dimension, TableRow, Filter } from "../types"
+
+// Remove the export block and keep individual exports
 export function generateSqlQuery(
-  tableName: string,
-  aggregation: string,
-  selectedMetrics: Metric[],
-  selectedDimensions: Dimension[] = [],
-  filters: Filter[] = []
+    tableName: string,
+    aggregation: string,
+    selectedMetrics: Metric[],
+    selectedDimensions: Dimension[] = [],
+    filters: Filter[] = []
 ): string {
   if (selectedMetrics.length === 0 && selectedDimensions.length === 0) {
     return "-- Select metrics or dimensions to generate a query"

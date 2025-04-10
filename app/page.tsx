@@ -1,5 +1,7 @@
 "use client"
-import QueryBuilder from "../src/components/QueryBuilder"
+
+import QueryBuilder from "@/src/components/query-builder"
+
 
 export default function Home() {
   return (

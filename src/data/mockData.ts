@@ -15,7 +15,7 @@ export const aggregationOptions: AggregationOption[] = [
   { value: "max", label: "MAX" },
 ]
 
-// Metrics options for checkboxes
+// Common metrics for all tables
 export const metricsOptions: Metric[] = [
   { value: "revenue", label: "Revenue", type: "currency" },
   { value: "profit", label: "Profit", type: "currency" },
@@ -23,7 +23,7 @@ export const metricsOptions: Metric[] = [
   { value: "discount", label: "Discount", type: "percentage" },
 ]
 
-// Dimensions options
+// Common dimensions for all tables
 export const dimensionsOptions = [
   { value: "product", label: "Product" },
   { value: "region", label: "Region" },
@@ -41,7 +41,7 @@ export const salesData: TableRow[] = [
     revenue: 8783.0,
     profit: 189.0,
     quantity: 47,
- 
+    discount: 10  // Add discount field
   },
   {
     id: 2,
@@ -371,6 +371,35 @@ export const getPaginatedData = (data: TableRow[], page: number): PaginatedData 
     totalPages: Math.ceil(data.length / ITEMS_PER_PAGE),
     currentPage: page
   };
+};
+
+export const tableSpecificOptions = {
+    sales: {
+        metrics: [
+            { value: "revenue", label: "Revenue", type: "currency" },
+            { value: "profit", label: "Profit", type: "currency" },
+            { value: "quantity", label: "Quantity", type: "number" },
+            { value: "discount", label: "Discount", type: "percentage" }
+        ],
+        dimensions: [
+            { value: "product", label: "Product" },
+            { value: "region", label: "Region" },
+            { value: "month", label: "Month" },
+            { value: "category", label: "Category" }
+        ]
+    },
+    inventory: {
+        metrics: [
+            { value: "quantity", label: "Stock Quantity", type: "number" },
+            { value: "reorder_point", label: "Reorder Point", type: "number" },
+            { value: "unit_cost", label: "Unit Cost", type: "currency" }
+        ],
+        dimensions: [
+            { value: "product", label: "Product" },
+            { value: "warehouse", label: "Warehouse" },
+            { value: "category", label: "Category" }
+        ]
+    }
 };
 
 export const mockDataByTable = {

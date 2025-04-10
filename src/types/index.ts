@@ -33,3 +33,13 @@ export interface Filter {
   operator: FilterOperator;
   value: string;
 }
+
+export interface SavedQuery {
+    id: number
+    query: string
+    metrics: Metric[]
+    dimensions: Dimension[]
+    timestamp: string
+    tableName: string
+    aggregation: string
+}
